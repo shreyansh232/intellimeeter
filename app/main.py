@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 from app.database.db import Base, engine
 from app.database.models import *
+from app.middleware.trace import trace_middleware
 
 
 @asynccontextmanager
@@ -15,6 +16,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+app.middleware("http")(trace_middleware)
 
 
 @app.get("/health")
