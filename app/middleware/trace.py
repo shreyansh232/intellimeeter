@@ -14,6 +14,8 @@ async def trace_middleware(request: Request, call_next):
     )  # request.headers.get("X-Request-ID") isn't needed but for good production practice added it anyways
 
     token = current_trace_id.set(trace_id)
+    
+    request.state.trace_id = trace_id
 
     try:
         logger.info(
