@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -18,7 +20,7 @@ class DecisionItem(BaseModel):
 class ActionItemAI(BaseModel):
     task: str
     assignee: str | None = None
-    due_date: str | None = None
+    due_date: datetime | None = None
     citations: list[Citation]
 
 

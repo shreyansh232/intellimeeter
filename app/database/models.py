@@ -159,8 +159,8 @@ class ActionItem(Base):
         index=True,
     )
 
-    due_date: Mapped[str | None] = mapped_column(
-        String(255),
+    due_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
         nullable=True,
     )
 

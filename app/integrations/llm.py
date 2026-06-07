@@ -29,6 +29,12 @@ async def analyze_transcript(
     - Do not make assumptions.
     - Do not infer missing facts.
     - Do not create attendees, tasks, deadlines, or decisions that are not explicitly stated.
+    - If a specific date cannot be determined with certainty,
+    return null.
+
+    - Only return ISO-8601 timestamps for due_date.
+    Never return natural language values such as
+    "Wednesday", "Thursday", "next Friday", etc.
 
     Citation Requirements:
     - Every generated item must contain at least one citation.
@@ -71,6 +77,3 @@ async def analyze_transcript(
         )
 
     return analysis
-
-
-
