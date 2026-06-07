@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     )
     debug: bool = False
 
+    secret_key: str = "secret-key-keep-it-hidden"
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

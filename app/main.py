@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from app.api import router as api_router
 from app.core.exceptions import (
     global_exception_handler,
     validation_exception_handler,
@@ -21,15 +22,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(api_router)
 app.middleware("http")(trace_middleware)
 app.exception_handler(RequestValidationError)(validation_exception_handler)
 
 app.exception_handler(Exception)(global_exception_handler)
-
-
-@app.get("/boom")
-def boom():
-    raise Exception("Error")
 
 
 @app.get("/health")
