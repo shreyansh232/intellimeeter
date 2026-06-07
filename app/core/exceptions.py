@@ -1,4 +1,4 @@
-from fastapi import Request, status
+from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -58,6 +58,29 @@ async def global_exception_handler(
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
                 "message": "Something went wrong",
+            },
+        },
+    )
+
+
+async def http_exception_handler(
+    request: Request,
+    exc: HTTPException,
+):
+    trace_id = getattr(
+        request.state,
+        "trace_id",
+        current_trace_id.get(),
+    )
+
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "traceId": trace_id,
+            "success": False,
+            "error": {
+                "code": "HTTP_ERROR",
+                "message": str(exc.detail),
             },
         },
     )
