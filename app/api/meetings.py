@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
+from app.services.analysis import analyze_meeting
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -54,8 +55,16 @@ async def list_meetings_route(
     )
 
     return success_response(
-        [
-            MeetingResponse.model_validate(meeting)
-            for meeting in meetings
-        ]
+        [MeetingResponse.model_validate(meeting) for meeting in meetings]
     )
+
+
+@router.post("/{meeting_id}/analyze")
+async def analyze_meeting_route(
+    meeting_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    analysis = await analyze_meeting(meeting_id=meeting_id, db=db, current_user=current_user)
+
+    return success_response(analysis)

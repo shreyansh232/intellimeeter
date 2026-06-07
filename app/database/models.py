@@ -153,15 +153,15 @@ class ActionItem(Base):
         nullable=False,
     )
 
-    assignee_email: Mapped[str] = mapped_column(
+    assignee_email: Mapped[str | None] = mapped_column(
         String(255),
-        nullable=False,
+        nullable=True,
         index=True,
     )
 
-    due_date: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=False,
+    due_date: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
     )
 
     status: Mapped[str] = mapped_column(
