@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-import pytest
 
 from app.core.auth import (
     create_access_token,

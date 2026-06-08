@@ -1,6 +1,5 @@
-import uuid
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from httpx import AsyncClient
@@ -50,7 +49,8 @@ async def test_full_lifecycle(client: AsyncClient, mock_llm_response):
         "/api/auth/register", json={"email": email, "password": password}
     )
     assert register_response.status_code == 200
-    user_data = register_response.json()
+    user_resp = register_response.json()
+    user_data = user_resp["data"]
     assert user_data["email"] == email
 
     # 2. Login
@@ -58,7 +58,8 @@ async def test_full_lifecycle(client: AsyncClient, mock_llm_response):
         "/api/auth/login", json={"email": email, "password": password}
     )
     assert login_response.status_code == 200
-    token_data = login_response.json()
+    login_resp = login_response.json()
+    token_data = login_resp["data"]
     token = token_data["access_token"]
 
     auth_headers = {"Authorization": f"Bearer {token}"}
