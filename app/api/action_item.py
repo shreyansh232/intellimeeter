@@ -1,10 +1,11 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import limiter
 from app.core.response import success_response
 from app.database.db import get_db
 from app.database.models import User
@@ -24,7 +25,9 @@ router = APIRouter(prefix="/action-items", tags=["action-items"])
 
 
 @router.post("")
+@limiter.limit("30/minute")
 async def create_action_item_route(
+    request: Request,
     data: ActionItemCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
@@ -39,7 +42,9 @@ async def create_action_item_route(
 
 
 @router.patch("/{action_item_id}/status")
+@limiter.limit("60/minute")
 async def update_action_item_status_route(
+    request: Request,
     action_item_id: UUID,
     data: ActionItemStatusUpdate,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -56,7 +61,9 @@ async def update_action_item_status_route(
 
 
 @router.get("")
+@limiter.limit("60/minute")
 async def get_action_items_route(
+    request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
     limit: int = Query(default=10, ge=1, le=100),
@@ -79,7 +86,9 @@ async def get_action_items_route(
 
 
 @router.get("/overdue")
+@limiter.limit("60/minute")
 async def get_overdue_action_items_route(
+    request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):

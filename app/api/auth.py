@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +12,7 @@ from app.core.auth import (
     settings,
     verify_password,
 )
+from app.core.rate_limit import limiter
 from app.core.response import success_response
 from app.database.db import get_db
 from app.database.models import User
@@ -22,7 +23,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.get("/me", response_model=SuccessResponse[UserResponse])
+@limiter.limit("60/minute")
 async def get_me(
+    request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     """
@@ -32,7 +35,9 @@ async def get_me(
 
 
 @router.post("/register", response_model=SuccessResponse[UserResponse])
+@limiter.limit("5/minute")
 async def register(
+    request: Request,
     user_in: UserCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
@@ -57,7 +62,9 @@ async def register(
 
 
 @router.post("/login", response_model=SuccessResponse[Token])
+@limiter.limit("10/minute")
 async def login(
+    request: Request,
     login_data: UserLogin,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):

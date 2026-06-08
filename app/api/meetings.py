@@ -1,10 +1,11 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from app.services.analysis import analyze_meeting
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import limiter
 from app.core.response import success_response
 from app.database.db import get_db
 from app.database.models import User
@@ -15,7 +16,9 @@ router = APIRouter(prefix="/meetings", tags=["meetings"])
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
 async def create_meeting_route(
+    request: Request,
     data: MeetingCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -28,7 +31,9 @@ async def create_meeting_route(
 
 
 @router.get("/{meeting_id}")
+@limiter.limit("60/minute")
 async def get_meeting_route(
+    request: Request,
     meeting_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -41,7 +46,9 @@ async def get_meeting_route(
 
 
 @router.get("")
+@limiter.limit("3/minute")
 async def list_meetings_route(
+    request: Request,
     limit: int = 10,
     offset: int = 0,
     db: AsyncSession = Depends(get_db),
@@ -60,7 +67,9 @@ async def list_meetings_route(
 
 
 @router.post("/{meeting_id}/analyze")
+@limiter.limit("10/minute")
 async def analyze_meeting_route(
+    request: Request,
     meeting_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
