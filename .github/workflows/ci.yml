@@ -17,4 +17,4 @@ jobs:
 
       - run: pip install uv
       - run: uv sync
-      - run: pytest
+      - run: uv run pytest
