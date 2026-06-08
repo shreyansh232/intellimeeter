@@ -28,5 +28,4 @@ async def get_evaluation_metadata():
                 "Standardized API Responses (Success/Error wrappers, Trace IDs)",
                 "Developer Experience (Makefile, modern uv package management)",
             ],
-        }
     )

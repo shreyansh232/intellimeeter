@@ -13,7 +13,6 @@ AI-powered meeting management platform that extracts summaries, decisions, actio
 * **Discord Notifications**: Automated reminders for overdue action items via Discord webhooks.
 * **Request Trace IDs**: Every request is assigned a unique UUID for easy debugging and log correlation.
 * **Unified API Responses**: Standardized success and error wrappers across all endpoints.
-
 ## Tech Stack
 
 * **Language**: Python 3.12

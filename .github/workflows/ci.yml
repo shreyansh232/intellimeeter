@@ -8,6 +8,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,4 +32,11 @@ jobs:
 
       - run: pip install uv
       - run: uv sync
+
       - run: uv run pytest
+        env:
+          PYTHONPATH: .
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+          SECRET_KEY: test-secret-key-123
+          OPENAI_API_KEY: sk-test-key
+          DISCORD_WEBHOOK_URL: https://discord.com/api/webhooks/test
