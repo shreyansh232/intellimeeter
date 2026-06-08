@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
 
     openai_api_key: str = "openai api key"
+    
+    discord_webhook_url: str = "webhook url"
 
     model_config = SettingsConfigDict(
         env_file=".env",

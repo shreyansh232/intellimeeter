@@ -120,3 +120,17 @@ async def get_overdue_action_items(
     )
 
     return result.scalars().all()
+
+
+async def get_all_overdue_action_items(
+    db: AsyncSession,
+):
+    result = await db.execute(
+        select(ActionItem)
+        .where(
+            ActionItem.status != "COMPLETED",
+            ActionItem.due_date < datetime.now(UTC),
+        )
+    )
+
+    return result.scalars().all()
