@@ -13,6 +13,7 @@ from app.core.exceptions import (
     http_exception_handler,
     validation_exception_handler,
 )
+from app.core.response import success_response
 from app.database import models  # noqa: F401
 from app.database.db import Base, engine, get_db
 from app.jobs.scheduler import scheduler
@@ -50,7 +51,7 @@ app.exception_handler(HTTPException)(http_exception_handler)
 
 @app.get("/health")
 async def health_check():
-    return JSONResponse(content={"status": "UP"}, status_code=200)
+    return success_response({"status": "UP"})
 
 
 @app.post("/run")
@@ -63,4 +64,4 @@ async def run_reminders(
         current_user=current_user,
     )
 
-    return {"success": True}
+    return success_response({"success": True})

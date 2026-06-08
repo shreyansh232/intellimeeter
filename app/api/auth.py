@@ -12,24 +12,26 @@ from app.core.auth import (
     settings,
     verify_password,
 )
+from app.core.response import success_response
 from app.database.db import get_db
 from app.database.models import User
 from app.schemas.auth import Token, UserCreate, UserLogin, UserResponse
+from app.schemas.response import SuccessResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=SuccessResponse[UserResponse])
 async def get_me(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     """
     Get current user information.
     """
-    return current_user
+    return success_response(current_user)
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=SuccessResponse[UserResponse])
 async def register(
     user_in: UserCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -51,10 +53,10 @@ async def register(
     db.add(user)
     await db.commit()
     await db.refresh(user)
-    return user
+    return success_response(user)
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=SuccessResponse[Token])
 async def login(
     login_data: UserLogin,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -78,4 +80,4 @@ async def login(
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return Token(access_token=access_token, token_type="bearer")
+    return success_response(Token(access_token=access_token, token_type="bearer"))
