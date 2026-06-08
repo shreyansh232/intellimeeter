@@ -9,6 +9,7 @@ router = APIRouter(prefix="/evaluation", tags=["evaluation"])
 async def get_evaluation_metadata():
     return {
         "candidateName": "Shreyansh Pandey",
+        "email": "shreyansh487@gmail.com",
         "repositoryUrl": "https://github.com/shreyansh232/intellimeeter",
         "deployedUrl": "https://intellimeeter.onrender.com",
         "documentationUrl": "https://intellimeeter.onrender.com/docs",
