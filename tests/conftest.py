@@ -29,9 +29,11 @@ def event_loop():
 
 
 async def create_test_db():
-    # Connect to default postgres database to create the test database
-    admin_url = settings.database_url.replace("intellimeeter", "postgres")
-    # Use asyncpg directly for DB creation as SQLAlchemy doesn't support it well
+    # Extract the test database name from TEST_DATABASE_URL
+    test_db_name = TEST_DATABASE_URL.rsplit("/", 1)[-1]
+
+    # Connect to the default "postgres" database (same host/credentials)
+    admin_url = TEST_DATABASE_URL.rsplit("/", 1)[0] + "/postgres"
     conn_str = admin_url.replace("postgresql+asyncpg://", "")
     user_pass, host_port_db = conn_str.split("@")
     user, password = user_pass.split(":")
@@ -45,7 +47,7 @@ async def create_test_db():
         database="postgres",
     )
     try:
-        await conn.execute("CREATE DATABASE intellimeeter_test")
+        await conn.execute(f'CREATE DATABASE "{test_db_name}"')
     except asyncpg.exceptions.DuplicateDatabaseError:
         pass
     finally:
